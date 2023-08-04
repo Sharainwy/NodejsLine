@@ -51,15 +51,6 @@ app.post('/webhook', line.middleware(config), (req, res) => {
     });
 });
 
-app.get('/users', async(req, res) => {
-  const id = parseInt(req.params.id);
-  const client = new MongoClient(uri);
-  await client.connect();
-  const users = await client.db('mydb').collection('users').find({}).toArray();
-  await client.close();
-  res.status(200).send(users);
-});
-
 // PUT route for updating event data
 app.put('/events/:userId', async (req, res) => {
   const userId = req.params.userId;
