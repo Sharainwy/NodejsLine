@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 
 // create LINE SDK client
 const client = new line.Client(config);
-
+const { MongoClient } = require('mongodb');
 const app = express();
 
 // แทนที่ 'your_mongodb_url' ด้วย URL การเชื่อมต่อ MongoDB จริงของคุณ
