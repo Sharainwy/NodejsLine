@@ -143,30 +143,53 @@ async function getProfile(userId) {
 
 // callback function to handle a single event
 async function handleEvent(event) {
-  try {
-    const eventData = {
-      type: event.type,
-      message: {},
-      source: {
-        userId: event.source.userId,
-      },
-      profile: null,
-    };
+//   try {
+//     const eventData = {
+//       type: event.type,
+//       message: {},
+//       source: {
+//         userId: event.source.userId,
+//       },
+//       profile: null,
+//     };
 
-    // Get user profile and store it in eventData
-    eventData.profile = await getProfile(event.source.userId);
-    // Find and update the existing document with upsert option
-    // await Event.findOneAndUpdate(
-    //   { 'source.userId': event.source.userId },
-    //   eventData,
-    //   { upsert: true }
-    // );
-    const newEvent = new Event(eventData);
-    await newEvent.save();
-    console.log('Sent Data to MongoDB:', eventData);
+  //     // Get user profile and store it in eventData
+  //     eventData.profile = await getProfile(event.source.userId);
+  //     // Find and update the existing document with upsert option
+  //     // await Event.findOneAndUpdate(
+  //     //   { 'source.userId': event.source.userId },
+  //     //   eventData,
+  //     //   { upsert: true }
+  //     // );
+  //     const newEvent = new Event(eventData);
+  //     await newEvent.save();
+  //     console.log('Sent Data to MongoDB:', eventData);
+  //   } catch (error) {
+  //     console.error('Error Send to MongoDB:', error);
+  //   }
+  // }
+  try {
+    if (event.type === 'beacon') {
+      const eventData = {
+        type: event.type,
+        beaconType: event.beacon.type,
+        userId: event.source.userId,
+        timestamp: event.timestamp,
+      };
+
+      // Get user profile and store it in eventData
+      eventData.profile = await getProfile(event.source.userId);
+
+      // Save the beacon event data to MongoDB
+      const newEvent = new Event(eventData);
+      await newEvent.save();
+
+      console.log('Saved Beacon Event to MongoDB:', eventData);
+    }
   } catch (error) {
-    console.error('Error Send to MongoDB:', error);
+    console.error('Error handling event and saving to MongoDB:', error);
   }
+
   switch (event.type) {
     case 'message':
       const message = event.message;
