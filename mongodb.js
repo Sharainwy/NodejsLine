@@ -36,6 +36,8 @@ const eventSchema = new mongoose.Schema({
   },
 });
 
+// eslint-disable-next-line no-unused-vars
+
 const Event = mongoose.model('Event', eventSchema);
 
 module.exports = Event;
