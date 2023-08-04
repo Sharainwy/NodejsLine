@@ -98,6 +98,25 @@ app.put('/events/:userId', async (req, res) => {
   }
 });
 
+app.get('/users', async (req, res) => {
+  try {
+    // ดึงข้อมูลผู้ใช้ทั้งหมดจากฐานข้อมูล
+    const users = await Event.find({});
+
+    // ส่งข้อมูลกลับไปให้กับผู้ใช้
+    res.status(200).json({
+      status: 'ok',
+      users: users,
+    });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An error occurred while fetching users.',
+    });
+  }
+});
+
 app.get('/users/:userId', async (req, res) => {
   const userId = req.params.userId;
   try {
