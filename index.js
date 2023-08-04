@@ -120,7 +120,7 @@ app.get('/users', async (req, res) => {
 app.get('/users/:userId', async (req, res) => {
   const userId = req.params.userId;
   try {
-    const user = await Event.findOne({ 'source.userId': userId });
+    const user = await Event.findOne({ 'profile.userId': userId });
     if (user) {
       res.status(200).json({
         status: 'ok',
