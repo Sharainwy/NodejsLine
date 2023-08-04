@@ -36,7 +36,7 @@ app.post('/webhook', line.middleware(config), (req, res) => {
   }
   // handle events separately
   Promise.all(req.body.events.map(event => {
-    console.log('event', event); // show event all
+    // console.log('event', event); // show event all
     // check verify webhook event
     if (event.replyToken === '00000000000000000000000000000000' ||
       event.replyToken === 'ffffffffffffffffffffffffffffffff') {
