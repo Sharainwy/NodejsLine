@@ -103,15 +103,15 @@ app.get('/users', async (req, res) => {
   try {
     // ดึงข้อมูลผู้ใช้ทั้งหมดจากฐานข้อมูล
     const users = await Event.find({});
-    if (user) {
+    if (users) {
       res.status(200).json({
         status: 'ok',
-        user: user,
+        users: users,
       });
     } else {
       res.status(404).json({
         status: 'not found',
-        user: null,
+        users: null,
       });
     }
   } catch (error) {
