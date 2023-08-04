@@ -156,13 +156,13 @@ async function handleEvent(event) {
     // Get user profile and store it in eventData
     eventData.profile = await getProfile(event.source.userId);
     // Find and update the existing document with upsert option
-    await Event.findOneAndUpdate(
-      { 'source.userId': event.source.userId },
-      eventData,
-      { upsert: true }
-    );
-    // const newEvent = new Event(eventData);
-    // await newEvent.save();
+    // await Event.findOneAndUpdate(
+    //   { 'source.userId': event.source.userId },
+    //   eventData,
+    //   { upsert: true }
+    // );
+    const newEvent = new Event(eventData);
+    await newEvent.save();
     console.log('Sent Data to MongoDB:', eventData);
   } catch (error) {
     console.error('Error Send to MongoDB:', error);
