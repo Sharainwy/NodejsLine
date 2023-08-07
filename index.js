@@ -86,6 +86,20 @@ app.put('/events/:userId', async (req, res) => {
   }
 });
 // https://carmine-hatchling-tutu.cyclic.app/users/
+app.get('/latest', async (req, res) => {
+  try {
+    const latestEvent = await Event.findOne({}).sort({ timestamp: -1 }).exec();
+    if (latestEvent) {
+      res.status(200).json(latestEvent);
+    } else {
+      res.status(404).json({ message: 'No events found in the database.' });
+    }
+  } catch (error) {
+    console.error('Error fetching latest event:', error);
+    res.status(500).json({ message: 'An error occurred while fetching the latest event.' });
+  }
+});
+
 app.get('/users', async (req, res) => {
   const userId = req.params.userId;
   try {
