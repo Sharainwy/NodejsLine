@@ -5,6 +5,7 @@
 const line = require('@line/bot-sdk');
 const express = require('express');
 const config = require('./config.json');
+const Blynk = require('blynk-library');
 const Event = require('./mongodb');
 const mongoose = require('mongoose');
 
@@ -12,6 +13,7 @@ const mongoose = require('mongoose');
 const client = new line.Client(config);
 const { MongoClient } = require('mongodb');
 const app = express();
+var cors = require('cors');
 
 mongoose.connect('mongodb+srv://Sharainwy:Mindbnk48@shar.xu2urv6.mongodb.net/', {
   useNewUrlParser: true,
@@ -86,7 +88,7 @@ app.put('/events/:userId', async (req, res) => {
   }
 });
 // https://carmine-hatchling-tutu.cyclic.app/users/
-app.get('/latest', async (req, res) => {
+app.get('/latest', cors(), async (req, res) => {
   try {
     const latestEvent = await Event.findOne({}).sort({ timestamp: -1 }).exec();
     if (latestEvent) {
@@ -101,7 +103,7 @@ app.get('/latest', async (req, res) => {
 });
 
 app.get('/users', async (req, res) => {
-  const userId = req.params.userId;
+// const userId = req.params.userId;
   try {
     const users = await Event.find({});
     if (users) {
