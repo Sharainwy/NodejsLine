@@ -5,7 +5,7 @@
 const line = require('@line/bot-sdk');
 const express = require('express');
 const config = require('./config.json');
-const Blynk = require('blynk-library');
+
 const Event = require('./mongodb');
 const mongoose = require('mongoose');
 
