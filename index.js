@@ -85,7 +85,7 @@ app.put('/events/:userId', async (req, res) => {
     });
   }
 });
-
+// https://carmine-hatchling-tutu.cyclic.app/users/
 app.get('/users', async (req, res) => {
   const userId = req.params.userId;
   try {
@@ -113,7 +113,7 @@ app.get('/users', async (req, res) => {
 app.get('/users/:userId', async (req, res) => {
   const userId = req.params.userId;
   try {
-    const user = await Event.findOne({ 'profile.userId': userId });
+    const user = await Event.findOneAndUpdate({ 'profile.userId': userId });
     if (user) {
       res.status(200).json({
         status: 'ok',
