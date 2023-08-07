@@ -13,16 +13,13 @@ const client = new line.Client(config);
 const { MongoClient } = require('mongodb');
 const app = express();
 
-// แทนที่ 'your_mongodb_url' ด้วย URL การเชื่อมต่อ MongoDB จริงของคุณ
 mongoose.connect('mongodb+srv://Sharainwy:Mindbnk48@shar.xu2urv6.mongodb.net/', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
-// สร้างอ็อบเจกต์การเชื่อมต่อ
 const db = mongoose.connection;
 
-// ตรวจสอบว่าการเชื่อมต่อสำเร็จหรือไม่
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
   console.log('Connect MongoDB Successfully');
@@ -92,7 +89,6 @@ app.put('/events/:userId', async (req, res) => {
 app.get('/users', async (req, res) => {
   const userId = req.params.userId;
   try {
-    // ดึงข้อมูลผู้ใช้ทั้งหมดจากฐานข้อมูล
     const users = await Event.find({});
     if (users) {
       res.status(200).json({
@@ -169,21 +165,6 @@ async function handleEvent(event) {
 //       profile: null,
 //     };
 
-  //     // Get user profile and store it in eventData
-  //     eventData.profile = await getProfile(event.source.userId);
-  //     // Find and update the existing document with upsert option
-  //     // await Event.findOneAndUpdate(
-  //     //   { 'source.userId': event.source.userId },
-  //     //   eventData,
-  //     //   { upsert: true }
-  //     // );
-  //     const newEvent = new Event(eventData);
-  //     await newEvent.save();
-  //     console.log('Sent Data to MongoDB:', eventData);
-  //   } catch (error) {
-  //     console.error('Error Send to MongoDB:', error);
-  //   }
-  // }
   try {
     if (event.type === 'beacon') {
       const eventData = {
@@ -196,7 +177,12 @@ async function handleEvent(event) {
       // Get user profile and store it in eventData
       eventData.profile = await getProfile(event.source.userId);
 
-      // Save the beacon event data to MongoDB
+      //     await Event.findOneAndUpdate(
+      //       { 'source.userId': event.source.userId },
+      //       eventData,
+      //       { upsert: true }
+      //     );
+      // // Save the beacon event data to MongoDB
       const newEvent = new Event(eventData);
       await newEvent.save();
 
