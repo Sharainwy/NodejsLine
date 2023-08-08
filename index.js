@@ -87,7 +87,7 @@ app.put('/events/:userId', async (req, res) => {
   }
 });
 // https://carmine-hatchling-tutu.cyclic.app/users/
-const latestEventData = {};
+
 // app.get('/latest', cors(), async (req, res) => {
 //   try {
 //     const latestEvent = await Event.findOne({}).sort({ timestamp: -1 }).exec();
@@ -103,7 +103,7 @@ const latestEventData = {};
 // });
 app.get('/latest', cors(), async (req, res) => {
   const timeout = 5000; // Timeout in milliseconds (e.g., 1 minute)
-
+  const latestEventData = await Event.findOne({}).sort({ timestamp: -1 }).exec();
   // Function to send the latest event data when available
   const sendLatestEvent = () => {
     if (latestEventData.timestamp) {
