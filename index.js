@@ -133,9 +133,9 @@ app.get('/latest', cors(), async (req, res) => {
   }
 });
 
-app.put('/pinlast', cors(), async (req, res) => {
+app.put('/putlast', cors(), async (req, res) => {
   try {
-    const latestEvent = await Event.findOne({}).sort({ 'message.timestamp': -1 }).exec();
+    const latestEvent = await Event.findOne({}).sort({ timestamp: -1 }).exec();
 
     if (latestEvent) {
       res.status(200).json(latestEvent);
@@ -176,7 +176,7 @@ app.delete('/users/:userId', async (req, res) => {
   const userId = req.params.userId;
   try {
     // ลบข้อมูลผู้ใช้ที่มี userId ที่ตรงกัน
-    const result = await Event.deleteOne({ 'source.userId': userId });
+    const result = await Event.deleteOne({ 'profile.userId': userId });
 
     if (result.deletedCount > 0) {
       res.status(200).json({
