@@ -176,7 +176,7 @@ app.delete('/users/:userId', async (req, res) => {
   const userId = req.params.userId;
   try {
     // ลบข้อมูลผู้ใช้ที่มี userId ที่ตรงกัน
-    const result = await Event.deleteOne({ 'profile.userId': userId });
+    const result = await Event.deleteMany({ 'profile.userId': userId });
 
     if (result.deletedCount > 0) {
       res.status(200).json({
@@ -273,7 +273,7 @@ async function handleEvent(event) {
       // // Save the beacon event data to MongoDB
       const existingEvent = await Event.findOne({ 'profile.userId': eventData.userId });
       if (existingEvent) {
-        await Event.deleteOne({ 'profile.userId': eventData.userId });
+        await Event.deleteMany({ 'profile.userId': eventData.userId });
       }
       const newEvent = new Event(eventData);
       await newEvent.save();
