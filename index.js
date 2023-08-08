@@ -132,21 +132,6 @@ app.get('/latest', cors(), async (req, res) => {
     });
   }
 });
-// ในส่วนของ JavaScript บนหน้าเว็บ
-function fetchLatestData() {
-  fetch('/latest')
-    .then(response => response.json())
-    .then(data => {
-      // ปรับแต่งการแสดงผลข้อมูลในหน้าเว็บตามความต้องการ
-      // เช่น อัปเดตตาราง, รายการ, แสดงข้อความ, ฯลฯ
-    })
-    .catch(error => {
-      console.error('Error fetching latest data:', error);
-    });
-}
-
-// อัพเดตข้อมูลทุกๆ 5 วินาที (ตัวอย่าง)
-setInterval(fetchLatestData, 5000);
 
 app.get('/users', cors(), async (req, res) => {
 // const userId = req.params.userId;
