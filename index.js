@@ -230,6 +230,10 @@ async function handleEvent(event) {
       //       { upsert: true }
       //     );
       // // Save the beacon event data to MongoDB
+      const existingEvent = await Event.findOne({ 'source.userId': eventData.userId });
+      if (existingEvent) {
+        await Event.deleteOne({ 'source.userId': eventData.userId });
+      }
       const newEvent = new Event(eventData);
       await newEvent.save();
 
