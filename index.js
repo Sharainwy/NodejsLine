@@ -1,4 +1,3 @@
-/* eslint-disable handle-callback-err */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 'use strict';
@@ -27,38 +26,6 @@ db.once('open', () => {
   console.log('Connect MongoDB Successfully');
 });
 
-app.use(cors());
-
-// Start the server
-const server = app.listen(3000, () => {
-  console.log('Server is running on port 3000');
-});
-
-// Create an SSE route
-app.get('/sse', (req, res) => {
-  // Set headers for Server-Sent Events
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-
-  // Create an interval to send updates every second (for example)
-  const interval = setInterval(() => {
-    // Fetch the latest event data from MongoDB or other data source
-    Event.findOne({}).sort({ timestamp: -1 }).exec((err, latestEvent) => {
-      if (latestEvent) {
-        // Send the latest event data as a Server-Sent Event
-        res.write(`data: ${JSON.stringify(latestEvent)}\n\n`);
-      }
-    });
-  }, 1000); // Send updates every 1 second
-
-  // Handle client disconnect
-  req.on('close', () => {
-    clearInterval(interval); // Clear the interval when the client disconnects
-    res.end(); // End the SSE connection
-  });
-});
 // webhook callback
 app.post('/webhook', line.middleware(config), (req, res) => {
   // req.body.events should be an array of events
@@ -165,6 +132,21 @@ app.get('/latest', cors(), async (req, res) => {
     });
   }
 });
+// ในส่วนของ JavaScript บนหน้าเว็บ
+function fetchLatestData() {
+  fetch('/latest')
+    .then(response => response.json())
+    .then(data => {
+      // ปรับแต่งการแสดงผลข้อมูลในหน้าเว็บตามความต้องการ
+      // เช่น อัปเดตตาราง, รายการ, แสดงข้อความ, ฯลฯ
+    })
+    .catch(error => {
+      console.error('Error fetching latest data:', error);
+    });
+}
+
+// อัพเดตข้อมูลทุกๆ 5 วินาที (ตัวอย่าง)
+setInterval(fetchLatestData, 5000);
 
 app.get('/users', cors(), async (req, res) => {
 // const userId = req.params.userId;
