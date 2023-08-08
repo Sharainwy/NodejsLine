@@ -5,7 +5,8 @@
 const line = require('@line/bot-sdk');
 const express = require('express');
 const config = require('./config.json');
-
+const WebSocket = require('ws');
+const wss = new WebSocket.Server({ noServer: true });
 const Event = require('./mongodb');
 const mongoose = require('mongoose');
 
@@ -25,6 +26,30 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
   console.log('Connect MongoDB Successfully');
+});
+
+// เมื่อมีการเชื่อมต่อ WebSocket
+wss.on('connection', (ws) => {
+  console.log('WebSocket connected');
+
+  // ส่งข้อมูลแบบสดเมื่อมีการเพิ่มเหตุการณ์ใหม่
+  Event.watch().on('change', async (change) => {
+    if (change.operationType === 'insert') {
+      const eventData = change.fullDocument;
+      ws.send(JSON.stringify(eventData));
+    }
+  });
+
+  ws.on('close', () => {
+    console.log('WebSocket disconnected');
+  });
+});
+
+// เชื่อมต่อ WebSocket server กับ existing HTTP server
+server.on('upgrade', (request, socket, head) => {
+  wss.handleUpgrade(request, socket, head, (ws) => {
+    wss.emit('connection', ws, request);
+  });
 });
 
 // webhook callback
@@ -102,7 +127,7 @@ app.get('/latest', cors(), async (req, res) => {
   }
 });
 
-app.get('/users', async (req, res) => {
+app.get('/users', cors(), async (req, res) => {
 // const userId = req.params.userId;
   try {
     const users = await Event.find({});
@@ -126,7 +151,7 @@ app.get('/users', async (req, res) => {
   }
 });
 
-app.get('/users/:userId', async (req, res) => {
+app.get('/users/:userId', cors(), async (req, res) => {
   const userId = req.params.userId;
   try {
     const user = await Event.findOneAndUpdate({ 'profile.userId': userId });
@@ -287,4 +312,9 @@ function handleSticker(message, replyToken) {
 const port = config.port;
 app.listen(port, () => {
   console.log(`listening on ${port}`);
+});
+server.on('upgrade', (request, socket, head) => {
+  wss.handleUpgrade(request, socket, head, (ws) => {
+    wss.emit('connection', ws, request);
+  });
 });
