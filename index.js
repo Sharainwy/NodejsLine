@@ -133,6 +133,21 @@ app.get('/latest', cors(), async (req, res) => {
   }
 });
 
+app.put('/pinlast', cors(), async (req, res) => {
+  try {
+    const latestEvent = await Event.findOne({}).sort({ 'message.timestamp': -1 }).exec();
+
+    if (latestEvent) {
+      res.status(200).json(latestEvent);
+    } else {
+      res.status(204).json({ message: 'No events found in the database.' });
+    }
+  } catch (error) {
+    console.error('Error fetching latest event:', error);
+    res.status(500).json({ message: 'An error occurred while fetching the latest event.' });
+  }
+});
+
 app.get('/users', cors(), async (req, res) => {
 // const userId = req.params.userId;
   try {
@@ -153,6 +168,32 @@ app.get('/users', cors(), async (req, res) => {
     res.status(500).json({
       status: 'error',
       message: 'An error occurred while fetching the user.',
+    });
+  }
+});
+
+app.delete('/users/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    // ลบข้อมูลผู้ใช้ที่มี userId ที่ตรงกัน
+    const result = await Event.deleteOne({ 'source.userId': userId });
+
+    if (result.deletedCount > 0) {
+      res.status(200).json({
+        status: 'ok',
+        message: `User with userId ${userId} has been deleted.`,
+      });
+    } else {
+      res.status(404).json({
+        status: 'not found',
+        message: `User with userId ${userId} not found.`,
+      });
+    }
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An error occurred while deleting the user.',
     });
   }
 });
