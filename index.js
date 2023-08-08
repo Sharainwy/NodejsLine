@@ -5,8 +5,6 @@
 const line = require('@line/bot-sdk');
 const express = require('express');
 const config = require('./config.json');
-const WebSocket = require('ws');
-const wss = new WebSocket.Server({ noServer: true });
 const Event = require('./mongodb');
 const mongoose = require('mongoose');
 
@@ -26,30 +24,6 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
   console.log('Connect MongoDB Successfully');
-});
-
-// เมื่อมีการเชื่อมต่อ WebSocket
-wss.on('connection', (ws) => {
-  console.log('WebSocket connected');
-
-  // ส่งข้อมูลแบบสดเมื่อมีการเพิ่มเหตุการณ์ใหม่
-  Event.watch().on('change', async (change) => {
-    if (change.operationType === 'insert') {
-      const eventData = change.fullDocument;
-      ws.send(JSON.stringify(eventData));
-    }
-  });
-
-  ws.on('close', () => {
-    console.log('WebSocket disconnected');
-  });
-});
-
-// เชื่อมต่อ WebSocket server กับ existing HTTP server
-server.on('upgrade', (request, socket, head) => {
-  wss.handleUpgrade(request, socket, head, (ws) => {
-    wss.emit('connection', ws, request);
-  });
 });
 
 // webhook callback
@@ -113,17 +87,49 @@ app.put('/events/:userId', async (req, res) => {
   }
 });
 // https://carmine-hatchling-tutu.cyclic.app/users/
+const latestEventData = {};
+// app.get('/latest', cors(), async (req, res) => {
+//   try {
+//     const latestEvent = await Event.findOne({}).sort({ timestamp: -1 }).exec();
+//     if (latestEvent) {
+//       res.status(200).json(latestEvent);
+//     } else {
+//       res.status(404).json({ message: 'No events found in the database.' });
+//     }
+//   } catch (error) {
+//     console.error('Error fetching latest event:', error);
+//     res.status(500).json({ message: 'An error occurred while fetching the latest event.' });
+//   }
+// });
 app.get('/latest', cors(), async (req, res) => {
-  try {
-    const latestEvent = await Event.findOne({}).sort({ timestamp: -1 }).exec();
-    if (latestEvent) {
-      res.status(200).json(latestEvent);
+  const timeout = 5000; // Timeout in milliseconds (e.g., 1 minute)
+
+  // Function to send the latest event data when available
+  const sendLatestEvent = () => {
+    if (latestEventData.timestamp) {
+      res.status(200).json(latestEventData);
     } else {
-      res.status(404).json({ message: 'No events found in the database.' });
+      // No new data yet, respond with a placeholder or empty response
+      res.status(204).end();
     }
-  } catch (error) {
-    console.error('Error fetching latest event:', error);
-    res.status(500).json({ message: 'An error occurred while fetching the latest event.' });
+  };
+
+  // If new data is available, send it immediately
+  if (latestEventData.timestamp) {
+    sendLatestEvent();
+  } else {
+    // Set up a timeout to send a response even if no new data is available
+    const timeoutId = setTimeout(() => {
+      sendLatestEvent();
+    }, timeout);
+
+    // You might also want to listen for events that trigger updates to latestEventData
+    // For example, whenever a new event is saved to the database
+
+    // In a real implementation, you would handle cleanup when the client disconnects
+    res.connection.on('close', () => {
+      clearTimeout(timeoutId);
+    });
   }
 });
 
@@ -312,9 +318,4 @@ function handleSticker(message, replyToken) {
 const port = config.port;
 app.listen(port, () => {
   console.log(`listening on ${port}`);
-});
-server.on('upgrade', (request, socket, head) => {
-  wss.handleUpgrade(request, socket, head, (ws) => {
-    wss.emit('connection', ws, request);
-  });
 });
