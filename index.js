@@ -176,7 +176,7 @@ app.delete('/users/:userId', async (req, res) => {
   const userId = req.params.userId;
   try {
     // ลบข้อมูลผู้ใช้ที่มี userId ที่ตรงกัน
-    const result = await Event.deleteMany({ 'profile.userId': userId });
+    const result = await Event.deleteOne({ 'profile.userId': userId });
 
     if (result.deletedCount > 0) {
       res.status(200).json({
