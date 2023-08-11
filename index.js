@@ -26,6 +26,10 @@ db.once('open', () => {
   console.log('Connect MongoDB Successfully');
 });
 
+app.use(cors({
+  origin: '*',
+}));
+
 // webhook callback
 app.post('/webhook', line.middleware(config), (req, res) => {
   // req.body.events should be an array of events
@@ -50,7 +54,7 @@ app.post('/webhook', line.middleware(config), (req, res) => {
 });
 
 // PUT route for updating event data
-app.put('/events/:userId', async (req, res) => {
+app.put('/events', async (req, res) => {
   const userId = req.params.userId;
   try {
     const eventData = {
@@ -194,30 +198,6 @@ app.delete('/users/:userId', async (req, res) => {
     res.status(500).json({
       status: 'error',
       message: 'An error occurred while deleting the user.',
-    });
-  }
-});
-
-app.get('/users/:userId', cors(), async (req, res) => {
-  const userId = req.params.userId;
-  try {
-    const user = await Event.findOneAndUpdate({ 'profile.userId': userId });
-    if (user) {
-      res.status(200).json({
-        status: 'ok',
-        user: user,
-      });
-    } else {
-      res.status(404).json({
-        status: 'not found',
-        user: null,
-      });
-    }
-  } catch (error) {
-    console.error('Error fetching user:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'An error occurred while fetching the user.',
     });
   }
 });
