@@ -207,7 +207,7 @@ const { EventEmitter } = require('events');
 const eventEmitter = new EventEmitter();
 
 // Route for SSE
-app.get('/sse', (req, res) => {
+app.get('/sse', cors(), (req, res) => {
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
