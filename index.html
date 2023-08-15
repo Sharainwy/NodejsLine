@@ -1,16 +1,107 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!-- ส่วนอื่น ๆ ของหน้า HTML -->
+  <!-- basic -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- mobile metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <!-- site metas -->
+  <title>Hello</title>
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!-- bootstrap css -->
+  <link rel="stylesheet" href="html/css/bootstrap.min.css">
+  <!-- style css -->
+  <link rel="stylesheet" href="html/css/style.css">
+  <!-- Responsive-->
+  <link rel="stylesheet" href="html/css/responsive.css">
+  <!-- fevicon -->
+  
+  <!-- Scrollbar Custom CSS -->
+  <link rel="stylesheet" href="html/css/jquery.mCustomScrollbar.min.css">
+  <!-- Tweaks for older IEs-->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
 </head>
-<body>
-
+<body class="main-layout">
+    <!-- loader  -->
+    <div class="loader_bg">
+       <div class="loader"><img src="html/images/loading.gif" alt="#"/></div>
+    </div>
+    <!-- end loader -->
+    <!-- header -->
+    <header>
+       <!-- header inner -->
+       <div class="header">
+          <div class="container-fluid">
+             <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
+                   <div class="full">
+                      <div class="center-desk">
+                         <div class="logo">
+                            <a href="index.html"><img src="html/images/logo.png" alt="#" /></a>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+                
+             </div>
+          </div>
+       </div>
+    </header>
+    <!-- end header inner -->
+    <!-- end header -->
+    <!-- banner -->
+    <section class="banner_main">
+       <div id="myCarousel" class="carousel slide banner1" data-ride="carousel">
+          <ol class="carousel-indicators">
+             <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+             <li data-target="#myCarousel" data-slide-to="1"></li>
+             <li data-target="#myCarousel" data-slide-to="2"></li>
+          </ol>
+          <div class="carousel-inner">
+             <div class="carousel-item active">
+                <div class="container-fluid">
+                   <div class="carousel-caption relative">
+                      <div class="row d_flex">
+                         <div class="col-md-6">
+                            <img class="bann_img" id="bannerImage" src="html/images/banner_ing.jpg" alt="#"/>
+                         </div>
+                         <div class="col-md-6">
+                            <span>01/03</span>
+                            <h1 id="bannerTitle">Hey</h1>
+                            <p id="bannerDescription">BM.</p>
+                            
+                         </div>
+                      </div>
+                   </div>
+                </div>
+             </div>
+             
+       </div>
+    </section>
+    
+    <!-- end footer -->
+    <!-- Javascript files-->
+    <script src="html/js/jquery.min.js"></script>
+    <script src="html/js/bootstrap.bundle.min.js"></script>
+    <script src="html/js/jquery-3.0.0.min.js"></script>
+    <!-- sidebar -->
+    <script src="html/js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="html/js/custom.js"></script>
+ 
 <!-- ตรงนี้คือส่วนที่คุณควรเพิ่ม -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
 <script>
   const socket = io('http://localhost:3001');
-  //const socket = io('https://a2f6-202-28-21-243.ngrok-free.app');
-  
+  //const socket = io('https://sharainwy.cyclic.app');
+
   socket.on('connect', () => {
     console.log('Connected to Socket.io server');
   });
@@ -18,26 +109,17 @@
   socket.on('profiledata', (data) => {
     console.log('Profile Data:', data);
 
-    // สร้างองค์ประกอบ HTML เพื่อแสดงข้อมูลล่าสุด
-    const newMessageElement = document.createElement('div');
+    // อัปเดตข้อมูลในส่วนของ banner
+    const bannerImage = document.getElementById('bannerImage');
+    bannerImage.src = data.pictureUrl;
 
-    const imageElement = document.createElement('img');
-    imageElement.src = data.pictureUrl; // ใช้ URL ของรูปภาพจาก data.pictureUrl
-    imageElement.alt = 'Profile Picture';
-    imageElement.style.width = '150px'; // ปรับขนาดรูปภาพตามที่คุณต้องการ
+    const bannerTitle = document.getElementById('bannerTitle');
+    bannerTitle.textContent = data.displayName;
 
-    const messageElement = document.createElement('p');
-    messageElement.innerHTML = `
-      User ID: ${data.userId}<br>
-      Display Name: ${data.displayName}<br>
-    `;
+    const bannerDescription = document.getEledescriptiomentById('bannerDescription');
+    bannerDescription.textContent = data.statusM; // แทนด้วยข้อมูลที่คุณต้องการแสดง
 
-    newMessageElement.appendChild(imageElement);
-    newMessageElement.appendChild(messageElement);
-
-    // เคลียร์ข้อมูลเดิมและเพิ่มข้อมูลใหม่ล่าสุดเข้าไปในส่วนของการแสดงผล
-    document.body.innerHTML = '';
-    document.body.appendChild(newMessageElement);
+    // ... (อัปเดตข้อมูลอื่น ๆ ตามต้องการ)
   });
 
   socket.on('disconnect', () => {
