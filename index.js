@@ -394,7 +394,7 @@ io.on('connection', socket => {
     console.log('A user disconnected');
   });
 });
-
+app.use(cors());
 const port = config.port;
 app.listen(port, () => {
   console.log(`listening on ${port}`);
