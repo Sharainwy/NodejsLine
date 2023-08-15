@@ -18,7 +18,7 @@ const server = http.createServer(app);
 // const io = socketIo(server);
 const io = socketIo(server, {
   cors: {
-    origin: '*',
+    origin: 'https://sharainwy.cyclic.app',
   },
 });
 
