@@ -35,7 +35,7 @@ db.once('open', () => {
 });
 
 app.use(cors({
-  origin: 'https://sharainwy.cyclic.app',
+  origin: '*',
 }));
 
 // webhook callback
