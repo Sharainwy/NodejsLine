@@ -23,10 +23,11 @@
     "eslint-plugin-standard": "^4.0.0"
   },
   "dependencies": {
-    "@line/bot-sdk": "^6.2.1",
+    "@line/bot-sdk": "^6.8.4",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "mongodb": "4.1",
-    "mongoose": "^7.4.1"
+    "mongoose": "^7.4.3",
+    "socket.io": "^4.7.2"
   }
 }

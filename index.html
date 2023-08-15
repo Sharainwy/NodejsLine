@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- ส่วนอื่น ๆ ของหน้า HTML -->
+</head>
+<body>
+
+<!-- ตรงนี้คือส่วนที่คุณควรเพิ่ม -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+<script>
+  const socket = io('http://localhost:3001');
+  //const socket = io('https://a2f6-202-28-21-243.ngrok-free.app');
+  
+  socket.on('connect', () => {
+    console.log('Connected to Socket.io server');
+  });
+
+  socket.on('profiledata', (data) => {
+    console.log('Profile Data:', data);
+
+    // สร้างองค์ประกอบ HTML เพื่อแสดงข้อมูลล่าสุด
+    const newMessageElement = document.createElement('div');
+
+    const imageElement = document.createElement('img');
+    imageElement.src = data.pictureUrl; // ใช้ URL ของรูปภาพจาก data.pictureUrl
+    imageElement.alt = 'Profile Picture';
+    imageElement.style.width = '150px'; // ปรับขนาดรูปภาพตามที่คุณต้องการ
+
+    const messageElement = document.createElement('p');
+    messageElement.innerHTML = `
+      User ID: ${data.userId}<br>
+      Display Name: ${data.displayName}<br>
+    `;
+
+    newMessageElement.appendChild(imageElement);
+    newMessageElement.appendChild(messageElement);
+
+    // เคลียร์ข้อมูลเดิมและเพิ่มข้อมูลใหม่ล่าสุดเข้าไปในส่วนของการแสดงผล
+    document.body.innerHTML = '';
+    document.body.appendChild(newMessageElement);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Disconnected from Socket.io server');
+  });
+
+</script>
+  
+</body>
+</html>

@@ -7,12 +7,20 @@ const express = require('express');
 const config = require('./config.json');
 const Event = require('./mongodb');
 const mongoose = require('mongoose');
+const http = require('http');
+const socketIo = require('socket.io');
 
-// create LINE SDK client
 const client = new line.Client(config);
 const { MongoClient } = require('mongodb');
 const app = express();
 var cors = require('cors');
+const server = http.createServer(app);
+// const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: '*',
+  },
+});
 
 mongoose.connect('mongodb+srv://Sharainwy:Mindbnk48@shar.xu2urv6.mongodb.net/', {
   useNewUrlParser: true,
@@ -202,34 +210,8 @@ app.delete('/users/:userId', async (req, res) => {
   }
 });
 
-// Define event emitter
-const { EventEmitter } = require('events');
-const eventEmitter = new EventEmitter();
-
-// Route for SSE
-app.get('/sse', cors(), (req, res) => {
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-
-  const client = res;
-  sseClients.push(client);
-
-  client.on('close', () => {
-    const index = sseClients.indexOf(client);
-    if (index !== -1) {
-      sseClients.splice(index, 1);
-    }
-  });
-});
-
 // Handle new beacon events
-eventEmitter.on('beacon', (eventData) => {
-  sseClients.forEach((client) => {
-    client.write(`data: ${JSON.stringify(eventData)}\n\n`);
-  });
-});
+
 // simple reply function
 const replyText = (token, texts) => {
   texts = Array.isArray(texts) ? texts : [texts];
@@ -272,7 +254,7 @@ async function handleEvent(event) {
 
       // Get user profile and store it in eventData
       eventData.profile = await getProfile(event.source.userId);
-      eventEmitter.emit('beacon', eventData);
+
       //     await Event.findOneAndUpdate(
       //       { 'source.userId': event.source.userId },
       //       eventData,
@@ -287,6 +269,41 @@ async function handleEvent(event) {
       await newEvent.save();
 
       console.log('Saved Beacon Event to MongoDB:', eventData);
+      io.emit('profiledata', {
+        userId: existingEvent.profile.userId,
+        displayName: existingEvent.profile.displayName,
+        pictureUrl: existingEvent.profile.pictureUrl,
+      });
+    } else if (event.type === 'message') {
+      // // Process the incoming message event
+      // const userProfile = await getProfile(event.source.userId);
+      // const displayName = userProfile ? userProfile.displayName : 'Unknown';
+      // const pictureUrl = userProfile ? userProfile.pictureUrl : '';
+
+      // // Emit the event to the connected Socket.io clients
+      // io.emit('new_message', {
+      //   userId: event.source.userId,
+      //   displayName: displayName,
+      //   pictureUrl: pictureUrl,
+      //   message: event.message.text,
+      //   messageType: event.message.type,
+      // });
+
+      // ค้นหาข้อมูลผู้ใช้ใน MongoDB ด้วย userId
+      const existingEvent = await Event.findOne({ 'profile.userId': event.source.userId });
+
+      if (existingEvent) {
+        // console.log('Found User Data in MongoDB:', existingEvent);
+
+        // Emit the user data to connected clients
+        io.emit('profiledata', {
+          userId: existingEvent.profile.userId,
+          displayName: existingEvent.profile.displayName,
+          pictureUrl: existingEvent.profile.pictureUrl,
+        });
+      } else {
+        console.log('User Data not found in MongoDB');
+      }
     }
   } catch (error) {
     console.error('Error handling event and saving to MongoDB:', error);
@@ -367,9 +384,20 @@ function handleLocation(message, replyToken) {
 function handleSticker(message, replyToken) {
   return replyText(replyToken, 'Got Sticker');
 }
-const sseClients = [];
+
+io.on('connection', socket => {
+  console.log('A user connected');
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+});
 
 const port = config.port;
 app.listen(port, () => {
   console.log(`listening on ${port}`);
+});
+
+server.listen(3001, () => {
+  console.log('Server is listening on port 3001');
 });
