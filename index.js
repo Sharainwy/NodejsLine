@@ -273,7 +273,7 @@ async function handleEvent(event) {
         userId: existingEvent.profile.userId,
         displayName: existingEvent.profile.displayName,
         pictureUrl: existingEvent.profile.pictureUrl,
-        statusM: existingEvent.profile.statusMessage,
+        statusMessage: existingEvent.profile.statusMessage,
       });
     } else if (event.type === 'message') {
       // // Process the incoming message event
@@ -301,6 +301,7 @@ async function handleEvent(event) {
           userId: existingEvent.profile.userId,
           displayName: existingEvent.profile.displayName,
           pictureUrl: existingEvent.profile.pictureUrl,
+          statusMessage: existingEvent.profile.statusMessage,
         });
       } else {
         console.log('User Data not found in MongoDB');
