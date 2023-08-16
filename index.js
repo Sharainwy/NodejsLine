@@ -61,7 +61,7 @@ app.post('/webhook', line.middleware(config), (req, res) => {
     });
 });
 //
-app.get('/', cors, (req, res) => {
+app.get('/', cors(), (req, res) => {
   try {
     // สร้างเส้นทางสำหรับไฟล์ index.html
     const indexPath = path.join(__dirname, 'index.html');
