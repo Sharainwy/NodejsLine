@@ -8,14 +8,14 @@ const config = require('./config.json');
 const Event = require('./mongodb');
 const mongoose = require('mongoose');
 const http = require('http');
-const https = require('https');
+
 const socketIo = require('socket.io');
 const path = require('path');
 const client = new line.Client(config);
 const { MongoClient } = require('mongodb');
 const app = express();
-var cors = require('cors');
-const server = https.createServer(app);
+const cors = require('cors');
+const server = http.createServer(app);
 // const io = socketIo(server);
 const io = socketIo(server, {
   cors: {
