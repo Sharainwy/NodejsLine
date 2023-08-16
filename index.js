@@ -8,17 +8,18 @@ const config = require('./config.json');
 const Event = require('./mongodb');
 const mongoose = require('mongoose');
 const http = require('http');
+const https = require('https');
 const socketIo = require('socket.io');
 const path = require('path');
 const client = new line.Client(config);
 const { MongoClient } = require('mongodb');
 const app = express();
 var cors = require('cors');
-const server = http.createServer(app);
+const server = https.createServer(app);
 // const io = socketIo(server);
 const io = socketIo(server, {
   cors: {
-    origin: '*',
+    origin: 'https://sharainwy.cyclic.app',
   },
 });
 
@@ -409,8 +410,8 @@ io.on('connection', cors(), socket => {
 });
 
 const port = config.port;
-app.listen(port, () => {
-  console.log(`listening on ${port}`);
+app.listen(3001, () => {
+  console.log(`listening on 3001`);
 });
 
 server.listen(443, () => {
