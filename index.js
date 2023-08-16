@@ -13,12 +13,12 @@ const path = require('path');
 const client = new line.Client(config);
 const { MongoClient } = require('mongodb');
 const app = express();
-const cors = require('cors');
+var cors = require('cors');
 const server = http.createServer(app);
 // const io = socketIo(server);
 const io = socketIo(server, {
   cors: {
-    origin: 'https://sharainwy.cyclic.app',
+    origin: '*',
   },
 });
 
@@ -35,7 +35,7 @@ db.once('open', () => {
 });
 
 app.use(cors({
-  origin: 'https://sharainwy.cyclic.app',
+  origin: '*',
 }));
 
 // webhook callback
@@ -60,11 +60,7 @@ app.post('/webhook', line.middleware(config), (req, res) => {
       res.status(500).end();
     });
 });
-app.use(express.static(path.join(__dirname, 'html')));
-app.use(express.static(path.join(__dirname, '/html')));
-app.use('/css', express.static(path.join(__dirname, '/css')));
-app.use('/icon', express.static(path.join(__dirname, '/icon')));
-app.use('/images', express.static(path.join(__dirname, '/images')));
+
 app.get('/', (req, res) => {
   try {
     // สร้างเส้นทางสำหรับไฟล์ index.html
@@ -411,11 +407,12 @@ io.on('connection', socket => {
     console.log('A user disconnected');
   });
 });
-app.use(cors());
+
 const port = config.port;
 app.listen(port, () => {
   console.log(`listening on ${port}`);
 });
+
 server.listen(3001, () => {
   console.log('Server is listening on port 3001');
 });
