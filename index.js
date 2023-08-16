@@ -410,8 +410,8 @@ io.on('connection', cors(), socket => {
 });
 
 const port = config.port;
-app.listen(3001, () => {
-  console.log(`listening on 3001`);
+app.listen(8443, () => {
+  console.log(`listening on 8443`);
 });
 
 server.listen(443, () => {
