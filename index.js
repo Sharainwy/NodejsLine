@@ -60,7 +60,7 @@ app.post('/webhook', line.middleware(config), (req, res) => {
       res.status(500).end();
     });
 });
-
+//
 app.get('/', (req, res) => {
   try {
     // สร้างเส้นทางสำหรับไฟล์ index.html
