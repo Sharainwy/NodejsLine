@@ -16,10 +16,18 @@ const { MongoClient } = require('mongodb');
 const app = express();
 const cors = require('cors');
 const server = http.createServer(app);
-// const io = socketIo(server);
+
+
+const corsOptions = {
+  origin: 'https://2da3-2403-6200-8847-e8f3-3dca-2f7-a11e-c1c3.ngrok.io',
+};
+
+
+app.use(cors(corsOptions));
+
 const io = socketIo(server, {
   cors: {
-    origin: '*',
+    origin: 'https://2da3-2403-6200-8847-e8f3-3dca-2f7-a11e-c1c3.ngrok.io', // หรือโดเมนที่คุณต้องการอนุญาตให้เข้าถึง
   },
 });
 
@@ -439,10 +447,10 @@ function handleSticker(message, replyToken) {
   return replyText(replyToken, 'Got Sticker');
 }
 
-io.on('connection', cors(), socket => {
+io.on('connection',  socket => {
   console.log('A user connected');
 
-  socket.on('disconnect', cors(), () => {
+  socket.on('disconnect',  () => {
     console.log('A user disconnected');
   });
 });
