@@ -9,7 +9,7 @@ const Event = require('./mongodb');
 const mongoose = require('mongoose');
 const http = require('http');
 const socketIo = require('socket.io');
-
+const path = require('path');
 const client = new line.Client(config);
 const { MongoClient } = require('mongodb');
 const app = express();
@@ -59,6 +59,23 @@ app.post('/webhook', line.middleware(config), (req, res) => {
       console.error(err);
       res.status(500).end();
     });
+});
+app.use(express.static(path.join(__dirname, 'html')));
+app.use(express.static(path.join(__dirname, '/html')));
+app.use('/css', express.static(path.join(__dirname, '/css')));
+app.use('/icon', express.static(path.join(__dirname, '/icon')));
+app.use('/images', express.static(path.join(__dirname, '/images')));
+app.get('/', (req, res) => {
+  try {
+    // สร้างเส้นทางสำหรับไฟล์ index.html
+    const indexPath = path.join(__dirname, 'index.html');
+    // app.use(express.static(path.join(__dirname, '/html')));
+    // ส่งไฟล์ index.html กลับไปแสดงผลในเว็บเบราว์เซอร์
+    res.sendFile(indexPath);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred');
+  }
 });
 
 // PUT route for updating event data
