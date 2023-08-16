@@ -448,10 +448,10 @@ io.on('connection', cors(), socket => {
 });
 
 const port = config.port;
-app.listen(8443, () => {
-  console.log(`listening on 8443`);
+app.listen(port, () => {
+  console.log(`listening on ${port}`);
 });
 
-server.listen(443, () => {
-  console.log('Server is listening on port 443');
+server.listen(3001, () => {
+  console.log('Server is listening on port 3001');
 });
