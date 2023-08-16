@@ -13,12 +13,12 @@ const path = require('path');
 const client = new line.Client(config);
 const { MongoClient } = require('mongodb');
 const app = express();
-var cors = require('cors');
+const cors = require('cors');
 const server = http.createServer(app);
 // const io = socketIo(server);
 const io = socketIo(server, {
   cors: {
-    origin: '*',
+    origin: 'https://sharainwy.cyclic.app',
   },
 });
 
@@ -35,7 +35,7 @@ db.once('open', () => {
 });
 
 app.use(cors({
-  origin: '*',
+  origin: 'https://sharainwy.cyclic.app',
 }));
 
 // webhook callback
@@ -411,12 +411,11 @@ io.on('connection', socket => {
     console.log('A user disconnected');
   });
 });
-
+app.use(cors());
 const port = config.port;
 app.listen(port, () => {
   console.log(`listening on ${port}`);
 });
-
 server.listen(3001, () => {
   console.log('Server is listening on port 3001');
 });
