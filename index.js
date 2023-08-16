@@ -400,10 +400,10 @@ function handleSticker(message, replyToken) {
   return replyText(replyToken, 'Got Sticker');
 }
 
-io.on('connection', socket => {
+io.on('connection', cors(), socket => {
   console.log('A user connected');
 
-  socket.on('disconnect', () => {
+  socket.on('disconnect', cors(), () => {
     console.log('A user disconnected');
   });
 });

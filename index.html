@@ -236,11 +236,11 @@
   //const socket = io('http://localhost:3001');
   const socket = io('https://sharainwy.cyclic.app');
 
-  socket.on('connect', () => {
+  socket.on('connect', cors(), () => {
     console.log('Connected to Socket.io server');
   });
 
-  socket.on('profiledata', (data) => {
+  socket.on('profiledata', cors(), (data) => {
     console.log('Profile Data:', data);
 
     // อัปเดตข้อมูลในส่วนของ banner
