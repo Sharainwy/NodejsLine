@@ -7,27 +7,20 @@ const express = require('express');
 const config = require('./config.json');
 const Event = require('./mongodb');
 const mongoose = require('mongoose');
+const app = express();
 const http = require('http');
-
 const socketIo = require('socket.io');
 const path = require('path');
 const client = new line.Client(config);
 const { MongoClient } = require('mongodb');
-const app = express();
-const cors = require('cors');
+
+var cors = require('cors');
 const server = http.createServer(app);
 
-
-const corsOptions = {
-  origin: '*',
-};
-
-
-app.use(cors(corsOptions));
-
-const io = socketIo(server, {
+// const io = socketIo(server);
+const io = require('socket.io')(server, {
   cors: {
-    origin: '*', // หรือโดเมนที่คุณต้องการอนุญาตให้เข้าถึง
+    origin: '*',
   },
 });
 
@@ -135,44 +128,6 @@ app.put('/events', async (req, res) => {
 //     res.status(500).json({ message: 'An error occurred while fetching the latest event.' });
 //   }
 // });
-// POST route to handle incoming data and emit to Socket.io
-
-app.post('/api/socket', cors(), async (req, res) => {
-  try {
-    const event = req.body.event; // ข้อมูลที่รับมาจากคำขอ HTTP
-
-    if (event.type === 'message') {
-      const eventData = {
-        type: event.type,
-        userId: event.source.userId,
-        timestamp: event.timestamp,
-      };
-      eventData.profile = await getProfile(event.source.userId);
-      console.log('Received Message Event:', eventData);
-      io.emit('message', {
-        userId: eventData.profile.userId,
-        displayName: eventData.profile.displayName,
-        pictureUrl: eventData.profile.pictureUrl,
-        statusMessage: eventData.profile.statusMessage,
-        message: event.message.text, // หรือคุณสามารถส่งข้อมูลอื่นๆ ที่เกี่ยวข้องกับข้อความได้ตามต้องการ
-      });
-    } else {
-      // Handle other event types here...
-    }
-
-    res.status(200).json({
-      status: 'ok',
-      message: 'Event processed and sent to Socket.io',
-    });
-  } catch (error) {
-    console.error('Error handling event and sending to Socket.io:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'An error occurred while handling the event.',
-    });
-  }
-});
-
 app.get('/latest', cors(), async (req, res) => {
   const timeout = 5000; // Timeout in milliseconds (e.g., 1 minute)
   const latestEventData = await Event.findOne({}).sort({ timestamp: -1 }).exec();
@@ -447,23 +402,19 @@ function handleSticker(message, replyToken) {
   return replyText(replyToken, 'Got Sticker');
 }
 
-<<<<<<< HEAD
 io.on('connection', socket => {
-=======
-io.on('connection',  socket => {
->>>>>>> 7cbe5a97dd0237218ab0335624823bf5d8e14ca2
   console.log('A user connected');
 
-  socket.on('disconnect',  () => {
+  socket.on('disconnect', () => {
     console.log('A user disconnected');
   });
 });
 
 const port = config.port;
 app.listen(port, () => {
-  console.log(`listening on ${port}`);
+  console.log(`listening on 3000`);
 });
 
-server.listen(3001, () => {
+server.listen(3001, cors(), () => {
   console.log('Server is listening on port 3001');
 });
