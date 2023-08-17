@@ -447,7 +447,11 @@ function handleSticker(message, replyToken) {
   return replyText(replyToken, 'Got Sticker');
 }
 
+<<<<<<< HEAD
 io.on('connection', socket => {
+=======
+io.on('connection',  socket => {
+>>>>>>> 7cbe5a97dd0237218ab0335624823bf5d8e14ca2
   console.log('A user connected');
 
   socket.on('disconnect',  () => {
