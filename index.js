@@ -19,7 +19,7 @@ const server = http.createServer(app);
 
 
 const corsOptions = {
-  origin: 'https://2da3-2403-6200-8847-e8f3-3dca-2f7-a11e-c1c3.ngrok.io',
+  origin: '*',
 };
 
 
@@ -27,7 +27,7 @@ app.use(cors(corsOptions));
 
 const io = socketIo(server, {
   cors: {
-    origin: 'https://2da3-2403-6200-8847-e8f3-3dca-2f7-a11e-c1c3.ngrok.io', // หรือโดเมนที่คุณต้องการอนุญาตให้เข้าถึง
+    origin: '*', // หรือโดเมนที่คุณต้องการอนุญาตให้เข้าถึง
   },
 });
 
@@ -456,10 +456,10 @@ io.on('connection',  socket => {
 });
 
 const port = config.port;
-// app.listen(port, () => {
-//   console.log(`listening on ${port}`);
-// });
+app.listen(port, () => {
+  console.log(`listening on ${port}`);
+});
 
-// server.listen(3001, () => {
-//   console.log('Server is listening on port 3001');
-// });
+server.listen(3001, () => {
+  console.log('Server is listening on port 3001');
+});
